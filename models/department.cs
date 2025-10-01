@@ -17,5 +17,6 @@ namespace HRManagementAPI.Models
         public string? Dep_Location { get; set; }
 
         public string? Dep_Number { get; set; }
+        public ICollection<User>? Users { get; set; }
     }
 }

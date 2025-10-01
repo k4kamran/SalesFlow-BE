@@ -9,7 +9,8 @@ namespace HRManagementAPI.Models
         [Key]
         public int Company_Code { get; set; }
 
-    
+
         public string? Company_Name { get; set; }
+        public ICollection<User>? Users { get; set; }
     }
 }

@@ -12,28 +12,34 @@ namespace HRManagementAPI.Controllers
         private readonly AppDbContext _context;
         public UsersController(AppDbContext context) => _context = context;
 
-        // 🔹 GET: api/users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetUsers()
+[HttpGet]
+public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+{
+    var users = await _context.USER_DETAILS
+        .Include(u => u.Company_Model)
+        .Include(u => u.Department_Model)
+        .Select(u => new UserDto
         {
-            var users = await _context.USER_DETAILS
-                .Select(u => new
-                {
-                    u.User_Code,
-                    u.User_Name,
-                    u.User_FirstName,
-                    u.User_LastName,
-                    u.User_Gender,
-                    u.User_Email,
-                    u.User_Mobile,
-                    u.User_Designation,
-                    u.User_Designation_Name,
-                    u.User_Designation_Desc
-                })
-                .ToListAsync();
+            User_Code = u.User_Code,
+            User_Name = u.User_Name,
+            User_FirstName = u.User_FirstName,
+            User_LastName = u.User_LastName,
+            User_Gender = u.User_Gender,
+            User_Email = u.User_Email,
+            User_Mobile = u.User_Mobile,
+            User_Designation = u.User_Designation,
+            User_Designation_Name = u.User_Designation_Name,
+            User_Designation_Desc = u.User_Designation_Desc,
+            Company_Code = u.Company_Code,
+            Company_Name = u.Company_Model.Company_Name,
+            dep_code = u.dep_code,
+            dep_name = u.Department_Model.Dep_Name,
+            dep_short_name = u.Department_Model.Dep_Short_Name
+        })
+        .ToListAsync();
 
-            return Ok(users);
-        }
+    return Ok(users);
+}
 
         // 🔹 POST: api/users
         [HttpPost]

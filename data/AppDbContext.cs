@@ -11,6 +11,5 @@ namespace HRManagementAPI.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Company> Companies { get; set; }
 
-
     }
 }

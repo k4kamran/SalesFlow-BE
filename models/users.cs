@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HRManagementAPI.Models
 {
-    [Table("USER_DETAILS")] 
+    [Table("USER_DETAILS")]
     public class User
     {
         [Key]
@@ -17,5 +17,11 @@ namespace HRManagementAPI.Models
         public int? User_Designation { get; set; }
         public string? User_Designation_Name { get; set; }
         public string? User_Designation_Desc { get; set; }
+        public int Company_Code { get; set; }
+        [ForeignKey("company_code")]
+        public Company? Company_Model { get; set; }
+        public int dep_code { get; set; }  
+        [ForeignKey("dep_code")]
+        public Department? Department_Model { get; set; }
     }
 }
