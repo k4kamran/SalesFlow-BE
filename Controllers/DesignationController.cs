@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementAPI.Data;
 using HRManagementAPI.Models;
+using HRManagementAPI.DTOs;
 
 namespace HRManagementAPI.Controllers
 {
@@ -16,82 +17,111 @@ namespace HRManagementAPI.Controllers
             _context = context;
         }
 
-        // 🔹 GET ALL
-        // GET: api/designations/get-all-designations
-        [HttpGet("get-all-designations")]
-        public async Task<ActionResult<IEnumerable<Designation>>> GetDesignations()
+        // ✅ GET ALL
+        [HttpGet("get-all")]
+        public async Task<ActionResult<IEnumerable<DesignationDto>>> GetDesignations()
         {
-            return await _context.Designations.ToListAsync();
+            var designations = await _context.Designations
+                .Select(d => new DesignationDto
+                {
+                    Des_Code = d.Des_Code,
+                    Des_Name = d.Des_Name,
+                    Des_Description = d.Des_Description,
+                    Des_Grade = d.Des_Grade,
+                    Des_Start_Sal = d.Des_Start_Sal,
+                    Des_Max_Sal = d.Des_Max_Sal,
+                    Des_Vba = d.Des_Vba,
+                    Des_Fuel_Limit = d.Des_Fuel_Limit
+                })
+                .ToListAsync();
+
+            return Ok(designations);
         }
 
-        // 🔹 GET BY ID
-        // GET: api/designations/get-designation/{id}
-        [HttpGet("get-designation/{id}")]
-        public async Task<ActionResult<Designation>> GetDesignation(int id)
+        // ✅ GET BY ID
+        [HttpGet("get/{id}")]
+        public async Task<ActionResult<DesignationDto>> GetDesignation(int id)
         {
-            var designation = await _context.Designations
-                .FirstOrDefaultAsync(d => d.Des_Code == id);
-
-            if (designation == null)
-            {
+            var d = await _context.Designations.FindAsync(id);
+            if (d == null)
                 return NotFound(new { message = "Designation not found" });
-            }
 
-            return designation;
+            var dto = new DesignationDto
+            {
+                Des_Code = d.Des_Code,
+                Des_Name = d.Des_Name,
+                Des_Description = d.Des_Description,
+                Des_Grade = d.Des_Grade,
+                Des_Start_Sal = d.Des_Start_Sal,
+                Des_Max_Sal = d.Des_Max_Sal,
+                Des_Vba = d.Des_Vba,
+                Des_Fuel_Limit = d.Des_Fuel_Limit
+            };
+
+            return Ok(dto);
         }
 
-        // 🔹 CREATE
-        // POST: api/designations/create-designation
-        [HttpPost("create-designation")]
-        public async Task<ActionResult<Designation>> CreateDesignation(Designation designation)
+        // ✅ CREATE
+        [HttpPost("create")]
+        public async Task<ActionResult<DesignationDto>> CreateDesignation(CreateDesignationDto dto)
         {
+            var designation = new Designation
+            {
+                Des_Name = dto.Des_Name,
+                Des_Description = dto.Des_Description,
+                Des_Grade = dto.Des_Grade,
+                Des_Start_Sal = dto.Des_Start_Sal,
+                Des_Max_Sal = dto.Des_Max_Sal,
+                Des_Vba = dto.Des_Vba,
+                Des_Fuel_Limit = dto.Des_Fuel_Limit
+            };
+
             _context.Designations.Add(designation);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetDesignation), new { id = designation.Des_Code }, designation);
+            var responseDto = new DesignationDto
+            {
+                Des_Code = designation.Des_Code,
+                Des_Name = designation.Des_Name,
+                Des_Description = designation.Des_Description,
+                Des_Grade = designation.Des_Grade,
+                Des_Start_Sal = designation.Des_Start_Sal,
+                Des_Max_Sal = designation.Des_Max_Sal,
+                Des_Vba = designation.Des_Vba,
+                Des_Fuel_Limit = designation.Des_Fuel_Limit
+            };
+
+            return CreatedAtAction(nameof(GetDesignation), new { id = designation.Des_Code }, responseDto);
         }
 
-        // 🔹 UPDATE
-        // PUT: api/designations/update-designation/{id}
-        [HttpPut("update-designation/{id}")]
-        public async Task<IActionResult> UpdateDesignation(int id, Designation designation)
+        // ✅ UPDATE
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateDesignation(int id, UpdateDesignationDto dto)
         {
-            if (id != designation.Des_Code)
-            {
-                return BadRequest(new { message = "Designation ID mismatch" });
-            }
+            var designation = await _context.Designations.FindAsync(id);
+            if (designation == null)
+                return NotFound(new { message = "Designation not found" });
 
-            _context.Entry(designation).State = EntityState.Modified;
+            designation.Des_Name = dto.Des_Name;
+            designation.Des_Description = dto.Des_Description;
+            designation.Des_Grade = dto.Des_Grade;
+            designation.Des_Start_Sal = dto.Des_Start_Sal;
+            designation.Des_Max_Sal = dto.Des_Max_Sal;
+            designation.Des_Vba = dto.Des_Vba;
+            designation.Des_Fuel_Limit = dto.Des_Fuel_Limit;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Designations.Any(d => d.Des_Code == id))
-                {
-                    return NotFound(new { message = "Designation not found" });
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return Ok(new { message = "Designation updated successfully" });
         }
 
-        // 🔹 DELETE
-        // DELETE: api/designations/delete-designation/{id}
-        [HttpDelete("delete-designation/{id}")]
+        // ✅ DELETE
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteDesignation(int id)
         {
             var designation = await _context.Designations.FindAsync(id);
             if (designation == null)
-            {
                 return NotFound(new { message = "Designation not found" });
-            }
 
             _context.Designations.Remove(designation);
             await _context.SaveChangesAsync();

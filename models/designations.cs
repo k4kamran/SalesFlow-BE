@@ -6,7 +6,7 @@ namespace HRManagementAPI.Models
     {
         [Key]                                  // ✅ Primary Key
         public int Des_Code { get; set; }       // Unique integer code (PK)
-
+        public string? Des_Name { get; set; }
         public string? Des_Description { get; set; }   // Description
         public string? Des_Grade { get; set; }         // Grade
         public decimal Des_Start_Sal { get; set; }    // Start Salary

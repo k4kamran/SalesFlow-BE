@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HRManagementAPI.Models;
 using HRManagementAPI.Data;
+using HRManagementAPI.DTOs;
 
 namespace HRManagementAPI.Controllers
 {
@@ -15,61 +16,93 @@ namespace HRManagementAPI.Controllers
             _context = context;
         }
 
-        // GET: api/departments
-        [HttpGet]
+        // GET: api/departments/get-all
+        [HttpGet("get-all")]
         public IActionResult GetDepartments()
         {
-            var departments = _context.Departments.ToList();
+            var departments = _context.Departments
+                .Select(d => new DepartmentDto
+                {
+                    Dep_Code = d.Dep_Code,
+                    Dep_Name = d.Dep_Name,
+                    Dep_Short_Name = d.Dep_Short_Name,
+                    Dep_Location = d.Dep_Location,
+                    Dep_Number = d.Dep_Number
+                })
+                .ToList();
+
             return Ok(departments);
         }
 
-        // GET: api/departments/5
-        [HttpGet("{Dep_code}")]
+        // GET: api/departments/get/{id}
+        [HttpGet("get/{id}")]
         public IActionResult GetDepartment(int id)
         {
             var department = _context.Departments.Find(id);
             if (department == null)
                 return NotFound();
 
-            return Ok(department);
+            var dto = new DepartmentDto
+            {
+                Dep_Code = department.Dep_Code,
+                Dep_Name = department.Dep_Name,
+                Dep_Short_Name = department.Dep_Short_Name,
+                Dep_Location = department.Dep_Location,
+                Dep_Number = department.Dep_Number
+            };
+
+            return Ok(dto);
         }
 
-        // POST: api/departments
-        [HttpPost]
-        public IActionResult CreateDepartment([FromBody] Department department)
+        // POST: api/departments/create
+        [HttpPost("create")]
+        public IActionResult CreateDepartment([FromBody] CreateDepartmentDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var department = new Department
+            {
+                Dep_Name = dto.Dep_Name,
+                Dep_Short_Name = dto.Dep_Short_Name,
+                Dep_Location = dto.Dep_Location,
+                Dep_Number = dto.Dep_Number
+            };
+
             _context.Departments.Add(department);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetDepartment), new { id = department.Dep_Code }, department);
+            var resultDto = new DepartmentDto
+            {
+                Dep_Code = department.Dep_Code,
+                Dep_Name = department.Dep_Name,
+                Dep_Short_Name = department.Dep_Short_Name,
+                Dep_Location = department.Dep_Location,
+                Dep_Number = department.Dep_Number
+            };
+
+            return CreatedAtAction(nameof(GetDepartment), new { id = department.Dep_Code }, resultDto);
         }
 
-        // PUT: api/departments/5
-        [HttpPut("{id}")]
-        public IActionResult UpdateDepartment(int id, [FromBody] Department department)
+        // PUT: api/departments/update/{id}
+        [HttpPut("update/{id}")]
+        public IActionResult UpdateDepartment(int id, [FromBody] UpdateDepartmentDto dto)
         {
-            if (id != department.Dep_Code)
-                return BadRequest();
-
-            var existingDepartment = _context.Departments.Find(id);
-            if (existingDepartment == null)
+            var department = _context.Departments.Find(id);
+            if (department == null)
                 return NotFound();
 
-            existingDepartment.Dep_Code = department.Dep_Code;
-            existingDepartment.Dep_Name = department.Dep_Name;
-            existingDepartment.Dep_Short_Name = department.Dep_Short_Name;
-            existingDepartment.Dep_Location = department.Dep_Location;
-            existingDepartment.Dep_Number = department.Dep_Number;
+            department.Dep_Name = dto.Dep_Name;
+            department.Dep_Short_Name = dto.Dep_Short_Name;
+            department.Dep_Location = dto.Dep_Location;
+            department.Dep_Number = dto.Dep_Number;
 
             _context.SaveChanges();
             return NoContent();
         }
 
-        // DELETE: api/departments/5
-        [HttpDelete("{id}")]
+        // DELETE: api/departments/delete/{id}
+        [HttpDelete("delete/{id}")]
         public IActionResult DeleteDepartment(int id)
         {
             var department = _context.Departments.Find(id);

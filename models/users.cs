@@ -14,11 +14,14 @@ namespace HRManagementAPI.Models
         public string? User_Gender { get; set; }
         public string? User_Email { get; set; }
         public string? User_Mobile { get; set; }
+
+        [ForeignKey("User_Designation")]
+        public Designation? Designation { get; set; } 
         public int? User_Designation { get; set; }
         public string? User_Designation_Name { get; set; }
         public string? User_Designation_Desc { get; set; }
         public int Company_Code { get; set; }
-        [ForeignKey("company_code")]
+        [ForeignKey("Company_Code")]
         public Company? Company_Model { get; set; }
         public int dep_code { get; set; }  
         [ForeignKey("dep_code")]
