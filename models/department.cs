@@ -4,9 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace HRManagementAPI.Models
 {
     [Table("DEPARTMENTS")]
-
-
-
     public class Department
     {
         [Key]
