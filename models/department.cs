@@ -5,6 +5,8 @@ namespace HRManagementAPI.Models
 {
     [Table("DEPARTMENTS")]
 
+
+
     public class Department
     {
         [Key]
