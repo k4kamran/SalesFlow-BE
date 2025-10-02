@@ -7,6 +7,7 @@ namespace HRManagementAPI.Models
     public class User
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? User_Code { get; set; }
         public string? User_Name { get; set; }
         public string? User_FirstName { get; set; }

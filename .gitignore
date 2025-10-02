@@ -1,0 +1,48 @@
+# Ignore Visual Studio / .NET build output folders
+bin/
+obj/
+
+# Ignore compiled DLLs, EXEs, PDBs and related files
+*.dll
+*.exe
+*.pdb
+*.appx
+*.apphost
+*.cache
+*.tmp
+
+# Ignore Razor generated cache
+*.rjs*
+*.cache.json
+
+# Ignore user-specific Visual Studio / VS Code settings
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore NuGet packages
+*.nupkg
+*.snupkg
+# (If you keep packages locally)
+packages/
+# VS2017+
+*.nuget.props
+*.nuget.targets
+
+# Ignore logs and temp files
+*.log
+*.vspscc
+*.vssscc
+*.vscodeignore
+*.swp
+*.DS_Store
+
+# Ignore test results
+TestResult*/
+build/
+artifacts/
+
+# Optional: if you have a wwwroot with minified files built by task runners
+node_modules/
